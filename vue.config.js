@@ -7,7 +7,7 @@ module.exports = {
         plugins: [
           px2rem({
             // 作为当前转换的基数
-            remUnit: 75,
+            remUnit: 37.5,
           }),
         ],
       },
