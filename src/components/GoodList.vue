@@ -29,7 +29,8 @@
           :immediate-check="false"
         >
           <!-- v-bind="item"将所有内容传递给子组件 -->
-          <card v-for="(item, index) in goodsList" :key="index" v-bind="item" />
+          <card v-for="(item, index) in goodsList"
+          :num="counterMap[item.id]" :key="index" v-bind="item" />
         </van-list>
       </van-pull-refresh>
     </div>
@@ -57,6 +58,7 @@ export default {
     ...mapState({
       showContent: (state) => state.showContent,
       goodsList: (state) => state.goodsList,
+      counterMap: (state) => state.counterMap,
     }),
   },
   components: {
@@ -75,6 +77,7 @@ export default {
       } else {
         this.type = type;
       }
+      this.onRefresh();
     },
     onRefresh() {
       this.isLoading = true;
