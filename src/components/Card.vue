@@ -34,6 +34,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import Animate from '../tools/animate';
 
 export default {
   data() {
@@ -47,6 +48,30 @@ export default {
     // 本地化存储
     counter(id, num) {
       this.storageChange({ id, value: num });
+      if (num === -1) {
+        return;
+      }
+      // 飞入购物车动画实现
+      // 读取列表中图片的位置及宽高
+      const { top, left } = this.$refs.img.getBoundingClientRect();
+      const { offsetWidth: imgWidth, offsetHeight: imgHeight } = this.$refs.img;
+      // 根据id获取到TabBar组件里的购物车dom,并获取位置及宽高
+      const shopCar = document.getElementById('shop-car');
+      const { top: carY, left: carX } = shopCar.getBoundingClientRect();
+      const { offsetWidth: carWidth, offsetHeight: carHeight } = shopCar;
+      // console.log(top, left, shopCar);
+      const endX = carX + carWidth / 2;
+      const endY = carY + carHeight / 2;
+      // 写一个动画方法
+      Animate({
+        startX: left,
+        startY: top,
+        endX,
+        endY,
+        src: this.$refs.img.src,
+        width: imgWidth,
+        height: imgHeight,
+      });
     },
   },
   mounted() {},
