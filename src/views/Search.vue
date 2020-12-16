@@ -1,7 +1,7 @@
 <template>
   <div class="search-wrapper">
     <div class="search-head">
-      <van-icon @click="goHome" name="arrow-left" class="arr-left" />
+      <van-icon @click="$router.goBack()" name="arrow-left" class="arr-left" />
       <van-search
         class="search-content"
         v-model="value"
@@ -44,6 +44,9 @@
         />
       </van-list>
     </div>
+    <div class="my-history" v-if="likeList.length <= 0 && showList">
+      <my-history :searchList="searchList" @search="onSearch"/>
+    </div>
   </div>
 </template>
 
@@ -51,10 +54,12 @@
 import { mapState } from 'vuex';
 import api from '../api/good';
 import Card from '../components/Card.vue';
+import MyHistory from '../components/MyHistory.vue';
 
 export default {
   components: {
     Card,
+    MyHistory,
   },
   data() {
     return {
@@ -73,6 +78,8 @@ export default {
       finished: false,
       goodsList: [],
       total: 0,
+      // 搜索后的结果展示
+      searchList: [],
     };
   },
   computed: {
@@ -94,19 +101,37 @@ export default {
     },
   },
   methods: {
-    goHome() {
-      this.$router.push({
-        name: 'Classify',
-      });
-    },
+    // goHome() {
+    //   this.$router.push({
+    //     name: 'Classify',
+    //   });
+    // },
     async onSearch(keyWord) {
-      // this.goodsList = [];
-      // console.log(keyWord);
       if (keyWord) {
         this.value = keyWord;
       } else {
         this.value = this.placeholder;
       }
+      // 逻辑 -> 先从搜索列表中找是否有查找过,
+      // 是则按时间排序,否则加入到数组最前面
+      const result = this.searchList.find((item) => item.value === this.value);
+      if (result) {
+        result.time = new Date().getTime();
+        this.searchList.sort((a, b) => b.time - a.time);
+      } else {
+        console.log('gg');
+        this.searchList.unshift({
+          value: this.value,
+          time: new Date().getTime(),
+        });
+        console.log(this.searchList);
+        // this.searchList.unshift({ value: this.keyWord, time: new Date().getTime() });
+        if (this.searchList.length >= 11) {
+          this.searchList.pop();
+        }
+      }
+      // 在用来展示搜索结果的列表头部添加信息
+      localStorage.setItem('searchList', JSON.stringify(this.searchList));
       // 清空模糊搜索列表
       this.likeList = [];
       this.page = 1;
@@ -142,6 +167,7 @@ export default {
     },
     // 获取搜索列表 列表显示方法
     async onLoad() {
+      // this.goodsList = [];
       const searchList = await api.search(this.value, this.page, this.size);
       // console.log(searchList);
       this.goodsList = [...this.goodsList, ...searchList.list];
@@ -153,6 +179,10 @@ export default {
         this.page += 1;
       }
     },
+  },
+  created() {
+    // 获取搜索结果并展示
+    this.searchList = JSON.parse(localStorage.getItem('searchList')) || [];
   },
 };
 </script>
@@ -198,6 +228,13 @@ export default {
     margin: 48px auto 0;
     z-index: 10;
     background: #fff;
+  }
+  .my-history {
+    width: 350px;
+    position: absolute;
+    top: 35px;
+    left: 10px;
+    z-index: 1;
   }
 }
 </style>

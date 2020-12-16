@@ -3,6 +3,11 @@ import VueRouter from 'vue-router';
 import Home from '@/views/Home.vue';
 // import Classify from '@/views/Classify.vue';
 
+VueRouter.prototype.back = false;
+VueRouter.prototype.goBack = function () {
+  this.back = true;
+  this.go(-1);
+};
 Vue.use(VueRouter);
 
 const routes = [

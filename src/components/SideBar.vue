@@ -59,14 +59,14 @@ export default {
     }),
   },
   mounted() {
-    setTimeout(() => {
-      this.resetGoodsList();
-      this.getGoodsList({
-        type: this.sideList[0],
-        page: 1,
-        sortType: 'all',
-      });
-    }, 500);
+    // setTimeout(() => {
+    //   this.resetGoodsList();
+    //   this.getGoodsList({
+    //     type: this.sideList[0],
+    //     page: 1,
+    //     sortType: 'all',
+    //   });
+    // }, 500);
   },
 };
 </script>
