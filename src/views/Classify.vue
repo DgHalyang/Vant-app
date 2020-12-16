@@ -1,9 +1,9 @@
 <template>
   <div class="classify-wrapper">
-    <div class="search-btn">
+    <router-link class="search-btn" tag="div" :to="{name:'Search'}">
       <van-icon name="search" />
       搜索框
-    </div>
+    </router-link>
     <one-tab />
     <div class="classify-content">
       <side-bar />

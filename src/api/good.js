@@ -11,4 +11,18 @@ export default {
       },
     });
   },
+  // 模糊搜索
+  likeSearch(value) {
+    return axios.get('/likeSearch', { params: { likeValue: value } });
+  },
+  // 搜索
+  search(type, page, size) {
+    return axios.get('/search', {
+      params: {
+        type,
+        page,
+        size,
+      },
+    });
+  },
 };

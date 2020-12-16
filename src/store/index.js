@@ -22,7 +22,6 @@ export default new Vuex.Store({
     },
     setShowContent(state, boolean) {
       state.showContent = boolean;
-      console.log(state.showContent);
     },
     setGoodsList(state, list) {
       state.goodsList = [...state.goodsList, ...list];
