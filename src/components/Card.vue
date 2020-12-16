@@ -42,13 +42,16 @@ export default {
       sellOut: false,
     };
   },
-  props: ['images', 'desc', 'tags', 'title', 'price', 'id', 'num'],
+  props: ['images', 'desc', 'tags', 'title', 'price', 'id', 'num', 'nofly'],
   methods: {
     ...mapMutations(['storageChange']),
     // 本地化存储
     counter(id, num) {
       this.storageChange({ id, value: num });
       if (num === -1) {
+        return;
+      }
+      if (this.nofly) {
         return;
       }
       // 飞入购物车动画实现

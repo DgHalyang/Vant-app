@@ -25,4 +25,8 @@ export default {
       },
     });
   },
+  // 购物车
+  getGoodsById(value) {
+    return axios.get('/getGoodsByIds', { params: { value } });
+  },
 };

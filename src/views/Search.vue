@@ -15,7 +15,8 @@
           <div @touchend="onSearch(value)">搜索</div>
         </template>
         <template #action v-else>
-          <van-icon name="cart-o" id="shop-car" :badge="sum" />
+          <van-icon name="cart-o" id="shop-car"
+          :badge="sum" @click="$router.push('/home/shoppingCar')" />
         </template>
       </van-search>
     </div>
