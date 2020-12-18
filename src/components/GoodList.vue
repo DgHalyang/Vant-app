@@ -29,8 +29,12 @@
           :immediate-check="false"
         >
           <!-- v-bind="item"将所有内容传递给子组件 -->
-          <card v-for="(item, index) in goodsList"
-          :num="counterMap[item.id]" :key="index" v-bind="item" />
+          <card
+            v-for="(item, index) in goodsList"
+            :num="counterMap[item.id]"
+            :key="index"
+            v-bind="item"
+          />
         </van-list>
       </van-pull-refresh>
     </div>
@@ -48,7 +52,6 @@ export default {
     return {
       type: 'price-up',
       isLoading: false,
-      list: [],
       loading: false,
       finished: false,
       page: 1,
@@ -56,8 +59,9 @@ export default {
   },
   computed: {
     ...mapState({
-      showContent: (state) => state.showContent,
+      // 数据列表数组
       goodsList: (state) => state.goodsList,
+      showContent: (state) => state.showContent,
       counterMap: (state) => state.counterMap,
     }),
   },
@@ -79,7 +83,9 @@ export default {
       }
       this.onRefresh();
     },
+    // 下拉刷新
     onRefresh() {
+      // 底部刷新重置为true
       this.isLoading = true;
       this.finished = false;
       this.loading = false;
@@ -89,11 +95,14 @@ export default {
       this.isLoading = false;
       this.finished = true;
     },
-    // 在store.js中判断是否需要继续加载
+    // 在store.js中判断是否需要继续滚动加载
     async onLoad() {
       this.page += 1;
       this.loading = true;
-      const result = await this.getGoodsList({ page: this.page, sortType: this.type });
+      const result = await this.getGoodsList({
+        page: this.page,
+        sortType: this.type,
+      });
       console.log(result);
       if (result) {
         this.loading = false;

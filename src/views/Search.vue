@@ -11,12 +11,13 @@
         @input="input"
         @focus="focus"
       >
+        <!-- 插槽 -->
         <template #action v-if="showList">
           <div @touchend="onSearch(value)">搜索</div>
         </template>
         <template #action v-else>
           <van-icon name="cart-o" id="shop-car"
-          :badge="sum" @click="$router.push('/home/shoppingCar')" />
+          :badge="sum" @click="$router.push('home/shoppingCar')" />
         </template>
       </van-search>
     </div>
@@ -97,17 +98,16 @@ export default {
       );
       if (sum > 99) {
         return '99+';
+      } if (sum === 0) {
+        return '';
       }
       return sum;
     },
   },
   methods: {
-    // goHome() {
-    //   this.$router.push({
-    //     name: 'Classify',
-    //   });
-    // },
+    // 关键字搜索
     async onSearch(keyWord) {
+      // console.log(keyWord);
       if (keyWord) {
         this.value = keyWord;
       } else {
@@ -115,30 +115,41 @@ export default {
       }
       // 逻辑 -> 先从搜索列表中找是否有查找过,
       // 是则按时间排序,否则加入到数组最前面
+      // find() 方法返回通过测试（函数内判断）的数组的第一个元素的值。
       const result = this.searchList.find((item) => item.value === this.value);
       if (result) {
+        // 如果有，更新时间，放在最前面
         result.time = new Date().getTime();
         this.searchList.sort((a, b) => b.time - a.time);
       } else {
-        console.log('gg');
+        // 如果没有，在搜索列表中最前面加上这个对象。
         this.searchList.unshift({
           value: this.value,
           time: new Date().getTime(),
         });
-        console.log(this.searchList);
         // this.searchList.unshift({ value: this.keyWord, time: new Date().getTime() });
+        // 显示搜索列表中只展示10个数据。
         if (this.searchList.length >= 11) {
           this.searchList.pop();
         }
       }
-      // 在用来展示搜索结果的列表头部添加信息
+      // 本地存储 在用来展示搜索结果的列表头部添加信息
+      // 这是没有接口的数据
       localStorage.setItem('searchList', JSON.stringify(this.searchList));
       // 清空模糊搜索列表
       this.likeList = [];
       this.page = 1;
+      // 当组件滚动到底部时，会触发 load 事件并将 loading 设置成 true。
+      // 此时可以发起异步操作并更新数据，数据更新完毕后，将 loading 设置成 false 即可。
+      // 若数据已全部加载完毕，则直接将 finished 设置成 true 即可。
       this.finished = false;
+      // 清空数据列表再重新请求数据加载
+      this.goodsList = [];
       this.onLoad();
-      this.showList = false;
+      // 显示列表
+      setTimeout(() => {
+        this.showList = false;
+      }, 100);
     },
     // 防抖
     async input() {
@@ -161,23 +172,26 @@ export default {
     focus() {
       this.showList = true;
     },
-    // 格式化模式搜索的选项
+    // 格式化模式搜索的选项,加上红色字体
     formatHTML(item) {
       const reg = new RegExp(this.value, 'g');
       return item.replace(reg, this.value.fontcolor('red'));
     },
-    // 获取搜索列表 列表显示方法
+    // 触底加载 获取搜索列表 列表显示方法
     async onLoad() {
-      // this.goodsList = [];
+      // console.log('底部刷新');
+      // 请求接口加载列表数据
       const searchList = await api.search(this.value, this.page, this.size);
       // console.log(searchList);
       this.goodsList = [...this.goodsList, ...searchList.list];
       this.total = searchList.total;
       this.loading = false;
       if (this.goodsList.length >= this.total) {
+        // 滚动全部数据加载完毕，finished 改为true。
         this.finished = true;
       } else {
         this.page += 1;
+        this.onLoad();
       }
     },
   },

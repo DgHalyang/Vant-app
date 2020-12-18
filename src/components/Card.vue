@@ -10,9 +10,9 @@
         <div v-for="i in tags" :key="i">{{ i }}</div>
       </div>
       <div class="overflow-hidden prices">
-        <!-- <div class="price-off">￥{{ priceOff || price }}</div>
-        <div class="price" v-if="priceOff">￥{{ price }}</div> -->
-        <div class="price">￥{{ price }}</div>
+        <div class="price-off">￥{{ price }}</div>
+        <!-- <div class="price" v-if="priceOff">￥{{ price }}</div> -->
+        <!-- <div class="price">￥{{ price }}</div> -->
       </div>
       <div class="counter">
         <div @touchend="counter(id, -1)" v-if="num">
@@ -44,8 +44,9 @@ export default {
   },
   props: ['images', 'desc', 'tags', 'title', 'price', 'id', 'num', 'nofly'],
   methods: {
+    // 本地化存储 存储购物车的数据
     ...mapMutations(['storageChange']),
-    // 本地化存储
+    // 本地化存储 传入id 以及 是+1还是-1
     counter(id, num) {
       this.storageChange({ id, value: num });
       if (num === -1) {

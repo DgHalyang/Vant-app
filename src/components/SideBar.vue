@@ -28,6 +28,7 @@ export default {
     ...mapMutations(['resetGoodsList']),
     ...mapActions(['getGoodsList']),
     scrollTo(item, index, e) {
+      // console.log(item, index, e);
       if (this.move) {
         return;
       }
@@ -47,6 +48,7 @@ export default {
       // 获取右侧列表信息
       this.resetGoodsList();
       this.getGoodsList({
+        // 名字，页数，排序方法
         type: this.sideList[index],
         page: 1,
         sortType: 'all',

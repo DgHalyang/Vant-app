@@ -1,6 +1,7 @@
 import axios from '@/axios';
 
 export default {
+  // 获取侧边栏数据
   getSidebar(type) {
     return axios.get('/getsidebar', { params: { type } });
   },

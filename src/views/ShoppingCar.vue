@@ -12,6 +12,7 @@
       <van-checkbox-group v-model="result" ref="checkboxGroup">
         <div class="card-box" v-for="item in list" :key="item.id">
           <van-checkbox class="check" :name="item.id"></van-checkbox>
+          <!-- 向组件传递该物品的数量:num="counterMap[item.id]"  -->
           <card v-bind="item" :num="counterMap[item.id]" :nofly="true" />
         </div>
       </van-checkbox-group>
@@ -38,8 +39,11 @@ export default {
   },
   data() {
     return {
+      // 选中之后会加入到result数组之中
       result: [],
+      // 购物车数组
       list: [],
+      // 全选按钮
       checked: false,
     };
   },
@@ -54,9 +58,11 @@ export default {
         Toast('你没有选中商品!');
       }
       try {
+        // 确认框
         await Dialog.confirm({ message: '您是否要删除已选中商品?' });
         this.result.forEach((id) => {
           this.storageChange({ id, value: -Infinity });
+          // 筛选出购物车中没有该id的商品，即没有删除的商品，再渲染列表
           this.list = this.list.filter((item) => !this.result.includes(item.id));
         });
       } catch (error) {
@@ -64,11 +70,14 @@ export default {
       }
     },
     async getAllDate() {
+      // 所有购物车数据的物品的id的数组
+      console.log(this.counterMap);
       const result = Object.keys(this.counterMap);
       console.log(result);
       const res = await api.getGoodsById(result.join());
+      // 可以渲染的购物车数组
       this.list = res.list;
-      console.log(this.list);
+      // console.log(this.list);
     },
     checkAll() {
       if (this.checked) {
@@ -77,6 +86,7 @@ export default {
         this.$refs.checkboxGroup.toggleAll(false);
       }
     },
+    // 提交按钮
     onSubmit() {},
   },
   watch: {
@@ -97,9 +107,13 @@ export default {
     }),
     // 总额
     allMoney() {
+      // 获取到选中的数据
       const result = this.list.filter((item) => this.result.includes(item.id));
+      // console.log(result);
       return result.reduce((prev, next) => {
+        // 下一项是否有个数数据，没有则为0
         const num = this.counterMap[next.id] || 0;
+        // 因为有小数点后两位 所以 * 100;
         return Math.round(num * next.price * 100) + prev;
       }, 0);
     },
